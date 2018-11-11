@@ -66,7 +66,7 @@ DFSDM_Channel_HandleTypeDef hdfsdm1_channel2;
 
 UART_HandleTypeDef huart1;
 
-osThreadId defaultTaskHandle;
+osThreadId sineWaveTaskHandle;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
@@ -79,7 +79,7 @@ static void MX_GPIO_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_DFSDM1_Init(void);
 static void MX_DAC1_Init(void);
-void StartDefaultTask(void const * argument);
+void StartSineWaveTask(void const * argument);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
@@ -151,8 +151,8 @@ int main(void)
 
   /* Create the thread(s) */
   /* definition and creation of defaultTask */
-  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
-  defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
+  osThreadDef(sineWaveTask, StartSineWaveTask, osPriorityNormal, 0, 128);
+  sineWaveTaskHandle = osThreadCreate(osThread(sineWaveTask), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -425,8 +425,8 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE END 4 */
 
-/* StartDefaultTask function */
-void StartDefaultTask(void const * argument)
+/* StartSineWaveTask function */
+void StartSineWaveTask(void const * argument)
 {
 
   /* USER CODE BEGIN 5 */
