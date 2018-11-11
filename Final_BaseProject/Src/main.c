@@ -54,6 +54,8 @@
 /* USER CODE BEGIN Includes */
 #include "arm_math.h"
 #include "stm32l475e_iot01_qspi.h"
+#include "math.h"
+#define M_PI acos(-1.0)
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -72,6 +74,10 @@ osThreadId sineWaveTaskHandle;
 /* Private variables ---------------------------------------------------------*/
 int tim3_flag = 0;
 /* USER CODE END PV */
+float sampling_freq = 16000;
+float signal_freq = 440;
+float t = 0;
+float scaled_sine = 0;
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
@@ -430,10 +436,24 @@ void StartSineWaveTask(void const * argument)
 {
 
   /* USER CODE BEGIN 5 */
+	float32_t sine_out;
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+		//if t exceeds 31999 set back to 0 and continue to sample
+		if(t >= 32000)
+		{
+			t = 0;
+		}
+		//signal and sampling frequency given in the instructions
+		sine_out = arm_sin_f32(M_PI*signal_freq*(t/sampling_freq));
+		t++;
+		
+		scaled_sine = (sine_out + 1)*1024;
+		
+		HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, scaled_sine);
+		HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_2, DAC_ALIGN_12B_R, scaled_sine);
+		
   }
   /* USER CODE END 5 */ 
 }
