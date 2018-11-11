@@ -75,7 +75,7 @@ osThreadId sineWaveTaskHandle;
 int tim3_flag = 0;
 /* USER CODE END PV */
 float sampling_freq = 16000;
-float signal_freq = 440;
+float signal_freq = 220;
 float t = 0;
 float scaled_sine = 0;
 
@@ -449,10 +449,13 @@ void StartSineWaveTask(void const * argument)
 		sine_out = arm_sin_f32(M_PI*signal_freq*(t/sampling_freq));
 		t++;
 		
-		scaled_sine = (sine_out + 1)*1024;
+		scaled_sine = (sine_out + 1) * 2048;
 		
-		HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, scaled_sine);
-		HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_2, DAC_ALIGN_12B_R, scaled_sine);
+//		if(tim3_flag == 1)
+//		{
+			HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, scaled_sine);
+			HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_2, DAC_ALIGN_12B_R, scaled_sine);
+//		}
 		
   }
   /* USER CODE END 5 */ 
