@@ -75,7 +75,7 @@ osThreadId sineWaveTaskHandle;
 int tim3_flag = 0;
 /* USER CODE END PV */
 float sampling_freq = 16000;
-float signal_freq = 220;
+float signal_freq = 440;
 float t = 0;
 float scaled_sine = 0;
 
@@ -254,7 +254,7 @@ void SystemClock_Config(void)
 
     /**Configure the Systick interrupt time 
     */
-  HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/1000);
+  HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/16000);
 
     /**Configure the Systick 
     */
@@ -440,22 +440,24 @@ void StartSineWaveTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
+		//signal and sampling frequency given in the instructions
+		sine_out = arm_sin_f32(2*M_PI*signal_freq*(t/sampling_freq));
+		t++;
+		
+		scaled_sine = (sine_out + 1) * 2048;
+		
 		//if t exceeds 31999 set back to 0 and continue to sample
 		if(t >= 32000)
 		{
 			t = 0;
 		}
-		//signal and sampling frequency given in the instructions
-		sine_out = arm_sin_f32(M_PI*signal_freq*(t/sampling_freq));
-		t++;
 		
-		scaled_sine = (sine_out + 1) * 2048;
-		
-//		if(tim3_flag == 1)
-//		{
+		if(tim3_flag == 1)
+		{
+			tim3_flag = 0;
 			HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, scaled_sine);
 			HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_2, DAC_ALIGN_12B_R, scaled_sine);
-//		}
+		}
 		
   }
   /* USER CODE END 5 */ 
