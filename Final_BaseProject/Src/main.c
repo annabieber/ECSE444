@@ -78,6 +78,12 @@ float sampling_freq = 16000;
 float signal_freq = 440;
 float t = 0;
 float scaled_sine = 0;
+uint8_t writeSine = 0;
+uint8_t *readSine;
+int status = 10;
+uint8_t *array;
+uint32_t writeSpace;
+uint32_t readSpace;
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
@@ -85,6 +91,7 @@ static void MX_GPIO_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_DFSDM1_Init(void);
 static void MX_DAC1_Init(void);
+uint8_t BSP_QSPI_Init(void);
 void StartSineWaveTask(void const * argument);
 
 /* USER CODE BEGIN PFP */
@@ -138,6 +145,7 @@ int main(void)
   MX_USART1_UART_Init();
   MX_DFSDM1_Init();
   MX_DAC1_Init();
+	BSP_QSPI_Init();
   /* USER CODE BEGIN 2 */
 	HAL_DAC_Start(&hdac1, DAC_CHANNEL_1);
 	HAL_DAC_Start(&hdac1, DAC_CHANNEL_2);
@@ -437,6 +445,17 @@ void StartSineWaveTask(void const * argument)
 
   /* USER CODE BEGIN 5 */
 	float32_t sine_out;
+	
+	//this takes a long time so give it a minute
+	BSP_QSPI_Erase_Chip();
+	if(BSP_QSPI_GetStatus() != QSPI_OK)
+	{
+		status = 0;
+	}
+	else
+	{
+		status = 5;
+	}
   /* Infinite loop */
   for(;;)
   {
@@ -444,7 +463,19 @@ void StartSineWaveTask(void const * argument)
 		sine_out = arm_sin_f32(2*M_PI*signal_freq*(t/sampling_freq));
 		t++;
 		
+		
+		
 		scaled_sine = (sine_out + 1) * 2048;
+		
+		//can't seem to figure out the types that are needed here
+		//will have to come back to this
+		
+		array = (uint8_t*)(&scaled_sine);
+		BSP_QSPI_Write(array,writeSpace,32);
+		writeSpace = writeSpace + 4;
+		
+		
+		
 		
 		//if t exceeds 31999 set back to 0 and continue to sample
 		if(t >= 32000)
@@ -455,6 +486,8 @@ void StartSineWaveTask(void const * argument)
 		if(tim3_flag == 1)
 		{
 			tim3_flag = 0;
+			BSP_QSPI_Read(readSine,readSpace,32);
+			readSpace = readSpace + 4;
 			HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, scaled_sine);
 			HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_2, DAC_ALIGN_12B_R, scaled_sine);
 		}
