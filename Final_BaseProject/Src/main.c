@@ -66,6 +66,8 @@ DFSDM_Filter_HandleTypeDef hdfsdm1_filter1;
 DFSDM_Channel_HandleTypeDef hdfsdm1_channel1;
 DFSDM_Channel_HandleTypeDef hdfsdm1_channel2;
 
+TIM_HandleTypeDef htim2;
+
 UART_HandleTypeDef huart1;
 
 osThreadId sineWaveTaskHandle;
@@ -74,10 +76,13 @@ osThreadId sineWaveTaskHandle;
 /* Private variables ---------------------------------------------------------*/
 int tim3_flag = 0;
 /* USER CODE END PV */
+float32_t sine_out1;
+float32_t sine_out2;
 float sampling_freq = 16000;
 float signal_freq = 440;
 float t = 0;
-float scaled_sine = 0;
+float scaled_sine1 = 0;
+float scaled_sine2 = 0;
 uint8_t writeSine = 0;
 uint8_t *readSine;
 int status = 10;
@@ -85,12 +90,16 @@ uint8_t *array;
 uint32_t writeSpace;
 uint32_t readSpace;
 
+float32_t matrixData[4] = {0.3, 0.7, 0.8, 0.2};
+arm_matrix_instance_f32 matrix = {.numRows=2, .numCols=2, .pData=matrixData};
+
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_DFSDM1_Init(void);
 static void MX_DAC1_Init(void);
+static void MX_TIM2_Init(void);
 uint8_t BSP_QSPI_Init(void);
 void StartSineWaveTask(void const * argument);
 
@@ -145,11 +154,19 @@ int main(void)
   MX_USART1_UART_Init();
   MX_DFSDM1_Init();
   MX_DAC1_Init();
+  MX_TIM2_Init();
 	BSP_QSPI_Init();
   /* USER CODE BEGIN 2 */
 	HAL_DAC_Start(&hdac1, DAC_CHANNEL_1);
 	HAL_DAC_Start(&hdac1, DAC_CHANNEL_2);
   /* USER CODE END 2 */
+
+	//Erasing here works
+	int i; 
+	for (i = 0; i >= 255; i++)
+	{
+		BSP_QSPI_Erase_Sector(i);
+	}
 
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
@@ -165,9 +182,9 @@ int main(void)
 
   /* Create the thread(s) */
   /* definition and creation of defaultTask */
-  osThreadDef(sineWaveTask, StartSineWaveTask, osPriorityNormal, 0, 128);
-  sineWaveTaskHandle = osThreadCreate(osThread(sineWaveTask), NULL);
-
+	osThreadDef(sineWaveTask, StartSineWaveTask, osPriorityNormal, 0, 128);
+	sineWaveTaskHandle = osThreadCreate(osThread(sineWaveTask), NULL);
+	
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
@@ -188,9 +205,11 @@ int main(void)
 	while (1)
   {
   /* USER CODE END WHILE */
+
   /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
+
 }
 
 /**
@@ -262,7 +281,7 @@ void SystemClock_Config(void)
 
     /**Configure the Systick interrupt time 
     */
-  HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/16000);
+  HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/1000);
 
     /**Configure the Systick 
     */
@@ -384,6 +403,39 @@ static void MX_DFSDM1_Init(void)
 
 }
 
+/* TIM2 init function */
+static void MX_TIM2_Init(void)
+{
+
+  TIM_ClockConfigTypeDef sClockSourceConfig;
+  TIM_MasterConfigTypeDef sMasterConfig;
+
+  htim2.Instance = TIM2;
+  htim2.Init.Prescaler = 10;
+  htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim2.Init.Period = 500;
+  htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim2, &sClockSourceConfig) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+}
+
 /* USART1 init function */
 static void MX_USART1_UART_Init(void)
 {
@@ -410,28 +462,10 @@ static void MX_USART1_UART_Init(void)
 static void MX_GPIO_Init(void)
 {
 
-  GPIO_InitTypeDef GPIO_InitStruct;
-
   /* GPIO Ports Clock Enable */
-  __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOE_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
-
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);
-
-  /*Configure GPIO pin : PC13 */
-  GPIO_InitStruct.Pin = GPIO_PIN_13;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : PB14 */
-  GPIO_InitStruct.Pin = GPIO_PIN_14;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 }
 
@@ -444,10 +478,8 @@ void StartSineWaveTask(void const * argument)
 {
 
   /* USER CODE BEGIN 5 */
-	float32_t sine_out;
 	
-	//this takes a long time so give it a minute
-	BSP_QSPI_Erase_Chip();
+	//what does this mean? 
 	if(BSP_QSPI_GetStatus() != QSPI_OK)
 	{
 		status = 0;
@@ -456,40 +488,56 @@ void StartSineWaveTask(void const * argument)
 	{
 		status = 5;
 	}
+	
+	
   /* Infinite loop */
   for(;;)
   {
+		
 		//signal and sampling frequency given in the instructions
-		sine_out = arm_sin_f32(2*M_PI*signal_freq*(t/sampling_freq));
+		sine_out1 = arm_sin_f32(2*M_PI*signal_freq*t/sampling_freq);
+		sine_out2 = arm_sin_f32(2*M_PI*signal_freq*t/sampling_freq);
 		t++;
-		
-		
-		
-		scaled_sine = (sine_out + 1) * 2048;
-		
-		//can't seem to figure out the types that are needed here
-		//will have to come back to this
-		
-		array = (uint8_t*)(&scaled_sine);
-		BSP_QSPI_Write(array,writeSpace,32);
-		writeSpace = writeSpace + 4;
-		
-		
-		
-		
 		//if t exceeds 31999 set back to 0 and continue to sample
 		if(t >= 32000)
 		{
 			t = 0;
 		}
 		
+		scaled_sine1 = (sine_out1 + 1) * 512;		//highest value is 2 * 1024 = 2048 which is half of 2^12
+		scaled_sine2 = (sine_out2 + 1) * 512;	
+		
+		//check if correct frequency
+//		if(tim3_flag == 1)
+//		{
+//			tim3_flag = 0;
+//			HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, scaled_sine1);
+//			HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_2, DAC_ALIGN_12B_R, scaled_sine2);
+//		
+//		}
+		
+		//matrix multiplication
+		float32_t inputData[2] = {scaled_sine1, scaled_sine2};
+		float32_t mixedData[2];
+		arm_matrix_instance_f32 mixed = {.numRows=2, .numCols=1, .pData=mixedData};
+		arm_matrix_instance_f32 input = {.numRows=2, .numCols=1, .pData=inputData};
+		arm_mat_mult_f32(&matrix, &input, &mixed);		
+				
+		//can't seem to figure out the types that are needed here
+		//will have to come back to this
+		
+		array = (uint8_t*)(&scaled_sine1);
+		BSP_QSPI_Write(array,writeSpace,32);
+		writeSpace = writeSpace + 4;
+		
+		
 		if(tim3_flag == 1)
 		{
 			tim3_flag = 0;
 			BSP_QSPI_Read(readSine,readSpace,32);
 			readSpace = readSpace + 4;
-			HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, scaled_sine);
-			HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_2, DAC_ALIGN_12B_R, scaled_sine);
+			HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, scaled_sine1);
+			HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_2, DAC_ALIGN_12B_R, scaled_sine2);
 		}
 		
   }

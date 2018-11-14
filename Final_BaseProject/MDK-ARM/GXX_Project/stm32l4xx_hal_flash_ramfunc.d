@@ -32,7 +32,6 @@ gxx_project\stm32l4xx_hal_flash_ramfunc.o: ../Drivers/STM32L4xx_HAL_Driver/Inc/s
 gxx_project\stm32l4xx_hal_flash_ramfunc.o: ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_i2c_ex.h
 gxx_project\stm32l4xx_hal_flash_ramfunc.o: ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_pwr.h
 gxx_project\stm32l4xx_hal_flash_ramfunc.o: ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_pwr_ex.h
-gxx_project\stm32l4xx_hal_flash_ramfunc.o: ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_qspi.h
 gxx_project\stm32l4xx_hal_flash_ramfunc.o: ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_tim.h
 gxx_project\stm32l4xx_hal_flash_ramfunc.o: ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_tim_ex.h
 gxx_project\stm32l4xx_hal_flash_ramfunc.o: ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart.h

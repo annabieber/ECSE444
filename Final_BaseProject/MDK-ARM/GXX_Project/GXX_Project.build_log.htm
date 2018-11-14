@@ -3,59 +3,136 @@
 <pre>
 <h1>µVision Build Log</h1>
 <h2>Tool Versions:</h2>
-IDE-Version: µVision V5.15
-Copyright (C) 2015 ARM Ltd and ARM Germany GmbH. All rights reserved.
-License Information: ECE MCGILL, MCGILL UNI, LIC=----
+IDE-Version: µVision V5.26.2.0
+Copyright (C) 2018 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information: Anna Bieber, McGill University, LIC=----
  
 Tool Versions:
-Toolchain:       MDK-Lite  Version: 5.15.0
+Toolchain:       MDK-Lite  Version: 5.26.2.0
 Toolchain Path:  C:\Keil_v5\ARM\ARMCC\Bin
-C Compiler:      Armcc.exe V5.05 update 2 (build 169)
-Assembler:       Armasm.exe V5.05 update 2 (build 169)
-Linker/Locator:  ArmLink.exe V5.05 update 2 (build 169)
-Library Manager: ArmAr.exe V5.05 update 2 (build 169)
-Hex Converter:   FromElf.exe V5.05 update 2 (build 169)
-CPU DLL:         SARMCM3.DLL V5.15.0
-Dialog DLL:      DCM.DLL V1.13.2.0
-Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V2.0.15.0_KEIL
-Dialog DLL:      TCM.DLL V1.14.5.0
+C Compiler:      Armcc.exe V5.06 update 6 (build 750)
+Assembler:       Armasm.exe V5.06 update 6 (build 750)
+Linker/Locator:  ArmLink.exe V5.06 update 6 (build 750)
+Library Manager: ArmAr.exe V5.06 update 6 (build 750)
+Hex Converter:   FromElf.exe V5.06 update 6 (build 750)
+CPU DLL:         SARMCM3.DLL V5.26.2.0
+Dialog DLL:      DCM.DLL V1.17.2.0
+Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V3.0.5.0
+Dialog DLL:      TCM.DLL V1.36.1.0
  
 <h2>Project:</h2>
-C:\Users\igauth6\ECSE444Project\Final_BaseProject\MDK-ARM\GXX_Project.uvprojx
-Project File Date:  11/13/2018
+C:\Users\annab\Documents\Semester\U3 Fall 2018\ECSE 444\Project\ECSE444Project\Final_BaseProject\MDK-ARM\GXX_Project.uvprojx
+Project File Date:  11/14/2018
 
 <h2>Output:</h2>
-*** Using Compiler 'V5.05 update 2 (build 169)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
+*** Using Compiler 'V5.06 update 6 (build 750)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'GXX_Project'
+compiling stm32l475e_iot01_qspi.c...
+..\Drivers\B-L475E-IOT01\Src\stm32l475e_iot01_qspi.c(107): error:  #20: identifier "QSPI_HandleTypeDef" is undefined
+  QSPI_HandleTypeDef QSPIHandle;
+..\Drivers\B-L475E-IOT01\Src\stm32l475e_iot01_qspi.c(119): error:  #20: identifier "QSPI_HandleTypeDef" is undefined
+  static uint8_t QSPI_ResetMemory        (QSPI_HandleTypeDef *hqspi);
+..\Drivers\B-L475E-IOT01\Src\stm32l475e_iot01_qspi.c(120): error:  #20: identifier "QSPI_HandleTypeDef" is undefined
+  static uint8_t QSPI_WriteEnable        (QSPI_HandleTypeDef *hqspi);
+..\Drivers\B-L475E-IOT01\Src\stm32l475e_iot01_qspi.c(121): error:  #20: identifier "QSPI_HandleTypeDef" is undefined
+  static uint8_t QSPI_AutoPollingMemReady(QSPI_HandleTypeDef *hqspi, uint32_t Timeout);
+..\Drivers\B-L475E-IOT01\Src\stm32l475e_iot01_qspi.c(122): error:  #20: identifier "QSPI_HandleTypeDef" is undefined
+  static uint8_t QSPI_QuadMode           (QSPI_HandleTypeDef *hqspi, uint8_t Operation);
+..\Drivers\B-L475E-IOT01\Src\stm32l475e_iot01_qspi.c(123): error:  #20: identifier "QSPI_HandleTypeDef" is undefined
+  static uint8_t QSPI_HighPerfMode       (QSPI_HandleTypeDef *hqspi, uint8_t Operation);
+..\Drivers\B-L475E-IOT01\Src\stm32l475e_iot01_qspi.c(144): warning:  #223-D: function "HAL_QSPI_DeInit" declared implicitly
+    if (HAL_QSPI_DeInit(&QSPIHandle) != HAL_OK)
+..\Drivers\B-L475E-IOT01\Src\stm32l475e_iot01_qspi.c(155): error:  #20: identifier "QSPI_SAMPLE_SHIFTING_NONE" is undefined
+    QSPIHandle.Init.SampleShifting     = QSPI_SAMPLE_SHIFTING_NONE;
+..\Drivers\B-L475E-IOT01\Src\stm32l475e_iot01_qspi.c(157): error:  #20: identifier "QSPI_CS_HIGH_TIME_1_CYCLE" is undefined
+    QSPIHandle.Init.ChipSelectHighTime = QSPI_CS_HIGH_TIME_1_CYCLE;
+..\Drivers\B-L475E-IOT01\Src\stm32l475e_iot01_qspi.c(158): error:  #20: identifier "QSPI_CLOCK_MODE_0" is undefined
+    QSPIHandle.Init.ClockMode          = QSPI_CLOCK_MODE_0;
+..\Drivers\B-L475E-IOT01\Src\stm32l475e_iot01_qspi.c(160): warning:  #223-D: function "HAL_QSPI_Init" declared implicitly
+    if (HAL_QSPI_Init(&QSPIHandle) != HAL_OK)
+..\Drivers\B-L475E-IOT01\Src\stm32l475e_iot01_qspi.c(186): warning:  #223-D: function "HAL_QSPI_Init" declared implicitly
+    if (HAL_QSPI_Init(&QSPIHandle) != HAL_OK)
+..\Drivers\B-L475E-IOT01\Src\stm32l475e_iot01_qspi.c(203): warning:  #223-D: function "HAL_QSPI_DeInit" declared implicitly
+    if (HAL_QSPI_DeInit(&QSPIHandle) != HAL_OK)
+..\Drivers\B-L475E-IOT01\Src\stm32l475e_iot01_qspi.c(223): error:  #20: identifier "QSPI_CommandTypeDef" is undefined
+    QSPI_CommandTypeDef sCommand;
+..\Drivers\B-L475E-IOT01\Src\stm32l475e_iot01_qspi.c(226): error:  #20: identifier "QSPI_INSTRUCTION_1_LINE" is undefined
+    sCommand.InstructionMode    = QSPI_INSTRUCTION_1_LINE;
+..\Drivers\B-L475E-IOT01\Src\stm32l475e_iot01_qspi.c(228): error:  #20: identifier "QSPI_ADDRESS_4_LINES" is undefined
+    sCommand.AddressMode        = QSPI_ADDRESS_4_LINES;
+..\Drivers\B-L475E-IOT01\Src\stm32l475e_iot01_qspi.c(229): error:  #20: identifier "QSPI_ADDRESS_24_BITS" is undefined
+    sCommand.AddressSize        = QSPI_ADDRESS_24_BITS;
+..\Drivers\B-L475E-IOT01\Src\stm32l475e_iot01_qspi.c(231): error:  #20: identifier "QSPI_ALTERNATE_BYTES_4_LINES" is undefined
+    sCommand.AlternateByteMode  = QSPI_ALTERNATE_BYTES_4_LINES;
+..\Drivers\B-L475E-IOT01\Src\stm32l475e_iot01_qspi.c(232): error:  #20: identifier "QSPI_ALTERNATE_BYTES_8_BITS" is undefined
+    sCommand.AlternateBytesSize = QSPI_ALTERNATE_BYTES_8_BITS;
+..\Drivers\B-L475E-IOT01\Src\stm32l475e_iot01_qspi.c(234): error:  #20: identifier "QSPI_DATA_4_LINES" is undefined
+    sCommand.DataMode           = QSPI_DATA_4_LINES;
+..\Drivers\B-L475E-IOT01\Src\stm32l475e_iot01_qspi.c(237): error:  #20: identifier "QSPI_DDR_MODE_DISABLE" is undefined
+    sCommand.DdrMode            = QSPI_DDR_MODE_DISABLE;
+..\Drivers\B-L475E-IOT01\Src\stm32l475e_iot01_qspi.c(238): error:  #20: identifier "QSPI_DDR_HHC_ANALOG_DELAY" is undefined
+    sCommand.DdrHoldHalfCycle   = QSPI_DDR_HHC_ANALOG_DELAY;
+..\Drivers\B-L475E-IOT01\Src\stm32l475e_iot01_qspi.c(239): error:  #20: identifier "QSPI_SIOO_INST_EVERY_CMD" is undefined
+    sCommand.SIOOMode           = QSPI_SIOO_INST_EVERY_CMD;
+..\Drivers\B-L475E-IOT01\Src\stm32l475e_iot01_qspi.c(242): warning:  #223-D: function "HAL_QSPI_Command" declared implicitly
+    if (HAL_QSPI_Command(&QSPIHandle, &sCommand, HAL_QPSI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
+..\Drivers\B-L475E-IOT01\Src\stm32l475e_iot01_qspi.c(242): error:  #20: identifier "HAL_QPSI_TIMEOUT_DEFAULT_VALUE" is undefined
+    if (HAL_QSPI_Command(&QSPIHandle, &sCommand, HAL_QPSI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
+..\Drivers\B-L475E-IOT01\Src\stm32l475e_iot01_qspi.c(248): warning:  #223-D: function "HAL_QSPI_Receive" declared implicitly
+    if (HAL_QSPI_Receive(&QSPIHandle, pData, HAL_QPSI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
+..\Drivers\B-L475E-IOT01\Src\stm32l475e_iot01_qspi.c(248): error:  #20: identifier "HAL_QPSI_TIMEOUT_DEFAULT_VALUE" is undefined
+    if (HAL_QSPI_Receive(&QSPIHandle, pData, HAL_QPSI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
+..\Drivers\B-L475E-IOT01\Src\stm32l475e_iot01_qspi.c(265): error:  #20: identifier "QSPI_CommandTypeDef" is undefined
+    QSPI_CommandTypeDef sCommand;
+..\Drivers\B-L475E-IOT01\Src\stm32l475e_iot01_qspi.c(282): error:  #20: identifier "QSPI_INSTRUCTION_1_LINE" is undefined
+    sCommand.InstructionMode   = QSPI_INSTRUCTION_1_LINE;
+..\Drivers\B-L475E-IOT01\Src\stm32l475e_iot01_qspi.c(284): error:  #20: identifier "QSPI_ADDRESS_4_LINES" is undefined
+    sCommand.AddressMode       = QSPI_ADDRESS_4_LINES;
+..\Drivers\B-L475E-IOT01\Src\stm32l475e_iot01_qspi.c(285): error:  #20: identifier "QSPI_ADDRESS_24_BITS" is undefined
+    sCommand.AddressSize       = QSPI_ADDRESS_24_BITS;
+..\Drivers\B-L475E-IOT01\Src\stm32l475e_iot01_qspi.c(286): error:  #20: identifier "QSPI_ALTERNATE_BYTES_NONE" is undefined
+    sCommand.AlternateByteMode = QSPI_ALTERNATE_BYTES_NONE;
+..\Drivers\B-L475E-IOT01\Src\stm32l475e_iot01_qspi.c(287): error:  #20: identifier "QSPI_DATA_4_LINES" is undefined
+    sCommand.DataMode          = QSPI_DATA_4_LINES;
+..\Drivers\B-L475E-IOT01\Src\stm32l475e_iot01_qspi.c(289): error:  #20: identifier "QSPI_DDR_MODE_DISABLE" is undefined
+    sCommand.DdrMode           = QSPI_DDR_MODE_DISABLE;
+..\Drivers\B-L475E-IOT01\Src\stm32l475e_iot01_qspi.c(290): error:  #20: identifier "QSPI_DDR_HHC_ANALOG_DELAY" is undefined
+    sCommand.DdrHoldHalfCycle  = QSPI_DDR_HHC_ANALOG_DELAY;
+..\Drivers\B-L475E-IOT01\Src\stm32l475e_iot01_qspi.c(291): error:  #20: identifier "QSPI_SIOO_INST_EVERY_CMD" is undefined
+    sCommand.SIOOMode          = QSPI_SIOO_INST_EVERY_CMD;
+..\Drivers\B-L475E-IOT01\Src\stm32l475e_iot01_qspi.c: 6 warnings, 30 errors
 compiling main.c...
-linking...
-GXX_Project\GXX_Project.axf: Warning: L6988W: Ignoring unknown patch sdcomp-29491-629360.
-Program Size: Code=17596 RO-data=2668 RW-data=156 ZI-data=4852  
-Finished: 0 information, 1 warning and 0 error messages.
-FromELF: creating hex file...
-"GXX_Project\GXX_Project.axf" - 0 Error(s), 1 Warning(s).
+"GXX_Project\GXX_Project.axf" - 30 Error(s), 6 Warning(s).
 
 <h2>Software Packages used:</h2>
 
 Package Vendor: ARM
-                http://www.keil.com/pack/ARM.CMSIS.5.3.0.pack
-                ARM::CMSIS:DSP:1.5.2
+                http://www.keil.com/pack/ARM.CMSIS.5.4.0.pack
+                ARM.CMSIS.5.4.0
                 CMSIS (Cortex Microcontroller Software Interface Standard)
+   * Component: CORE Version: 5.1.2
    * Component: DSP Version: 1.5.2
-   * Component: CORE Version: 5.1.1
+
+Package Vendor: Keil
+                http://www.keil.com/pack/Keil.STM32L4xx_DFP.2.0.0.pack
+                Keil.STM32L4xx_DFP.2.0.0
+                STMicroelectronics STM32L4 Series Device Support, Drivers and Examples
 
 <h2>Collection of Component include folders:</h2>
-  C:\Users\igauth6\ECSE444Project\Final_BaseProject\MDK-ARM\RTE
-  C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.3.0\CMSIS\Include
+  .\RTE\_GXX_Project
+  C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\Core\Include
+  C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\DSP\Include
   C:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.0.0\Drivers\CMSIS\Device\ST\STM32L4xx\Include
 
 <h2>Collection of Component Files used:</h2>
 
+   * Component: ARM::CMSIS:CORE:5.1.2
+
    * Component: ARM::CMSIS:DSP:1.5.2
       Library file:  CMSIS\Lib\ARM\arm_cortexM4lf_math.lib
-      Include file:  CMSIS\Include\arm_math.h
-
-   * Component: ARM::CMSIS:CORE:5.1.1
+      Include file:  CMSIS\DSP\Include\arm_math.h
+Target not created.
+Build Time Elapsed:  00:00:07
 </pre>
 </body>
 </html>
