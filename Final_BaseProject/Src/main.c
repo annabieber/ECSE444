@@ -90,7 +90,7 @@ float scaled_sine2 = 0;
 uint8_t writeSine = 0;
 uint8_t *readSine;
 int status = 10;
-uint8_t *array;
+uint8_t *array[4];
 uint32_t writeSpace;
 uint32_t readSpace;
 
@@ -437,6 +437,10 @@ static void MX_TIM2_Init(void)
   {
     _Error_Handler(__FILE__, __LINE__);
   }
+			HAL_TIM_Base_Start_IT(&htim2);
+	
+	HAL_NVIC_EnableIRQ(TIM2_IRQn);
+
 
 }
 
@@ -497,28 +501,30 @@ void StartSineWaveTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-		
+		//if(tim3_flag == 1)
+		//{
+			//tim3_flag = 0;
 		//signal and sampling frequency given in the instructions
-		sine_out1 = arm_sin_f32(2*M_PI*signal_freq*t/sampling_freq);
-		sine_out2 = arm_sin_f32(2*M_PI*signal_freq1*t/sampling_freq);
-		t++;
-		//if t exceeds 31999 set back to 0 and continue to sample
-		if(t >= 32000)
-		{
-			t = 0;
-		}
+			sine_out1 = arm_sin_f32(2*M_PI*signal_freq*t/sampling_freq);
+			sine_out2 = arm_sin_f32(2*M_PI*signal_freq1*t/sampling_freq);
+			t++;
+			//if t exceeds 31999 set back to 0 and continue to sample
+			if(t >= 32000)
+			{
+				t = 0;
+			}
 		
-		scaled_sine1 = (sine_out1 + 1) * 512;		//highest value is 2 * 1024 = 2048 which is half of 2^12
-		scaled_sine2 = (sine_out2 + 1) * 512;	
+			scaled_sine1 = (sine_out1 + 1) * 512;		//highest value is 2 * 1024 = 2048 which is half of 2^12
+			scaled_sine2 = (sine_out2 + 1) * 512;	
 		
-		//check if correct frequency
-//		if(tim3_flag == 1)
-//		{
-//			tim3_flag = 0;
-//			HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, scaled_sine1);
-//			HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_2, DAC_ALIGN_12B_R, scaled_sine2);
+			//check if correct frequency
+//			if(tim3_flag == 1)
+//			{
+//				tim3_flag = 0;
+//				HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, scaled_sine1);
+//				HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_2, DAC_ALIGN_12B_R, scaled_sine2);
 //		
-//		}
+//			}
 		
 		//matrix multiplication
 		float32_t inputData[2] = {scaled_sine1, scaled_sine2};
@@ -530,19 +536,30 @@ void StartSineWaveTask(void const * argument)
 		//can't seem to figure out the types that are needed here
 		//will have to come back to this
 		
-		array = (uint8_t*)(&scaled_sine1);
-		BSP_QSPI_Write(array,writeSpace,32);
-		writeSpace = writeSpace + 4;
+		array[0] = (uint8_t*)(&scaled_sine1);
+		if(BSP_QSPI_Write(array[0],writeSpace,32) == QSPI_OK)
+		{
+			for( int i = 0; i<16; i+=4){
+				status = BSP_QSPI_Write(array[0],writeSpace,32);
+				writeSpace+=4;
+			}
+		}
+		
+		//writeSpace = writeSpace + 4;
 		
 		
-		//if(tim3_flag == 1)
-		//{
-		//	tim3_flag = 0;
-			BSP_QSPI_Read(readSine,readSpace,32);
-			readSpace = readSpace + 4;
+		
+		//if(BSP_QSPI_Write(array[0],writeSpace,32) == QSPI_OK)
+	//	{
+			BSP_QSPI_Read(array[0],writeSpace,32);
+			uint32_t temp1 = (uint32_t) array[0];
 			HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, scaled_sine1);
-			HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_2, DAC_ALIGN_12B_R, scaled_sine1);
-	//	}
+			HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_2, DAC_ALIGN_12B_R, scaled_sine2);
+		//}
+			//uint8_t i1 = BSP_QSPI_Read(array,writeSpace,32);
+			//readSpace = readSpace + 4;
+			
+		//}
 		
   }
   /* USER CODE END 5 */ 
