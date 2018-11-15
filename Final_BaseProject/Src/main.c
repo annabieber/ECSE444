@@ -61,6 +61,9 @@
 /* Private variables ---------------------------------------------------------*/
 DAC_HandleTypeDef hdac1;
 
+TIM_HandleTypeDef htim2;
+
+
 DFSDM_Filter_HandleTypeDef hdfsdm1_filter0;
 DFSDM_Filter_HandleTypeDef hdfsdm1_filter1;
 DFSDM_Channel_HandleTypeDef hdfsdm1_channel1;
@@ -79,7 +82,8 @@ int tim3_flag = 0;
 float32_t sine_out1;
 float32_t sine_out2;
 float sampling_freq = 16000;
-float signal_freq = 440;
+float signal_freq = 261.63;
+float signal_freq1 = 392;
 float t = 0;
 float scaled_sine1 = 0;
 float scaled_sine2 = 0;
@@ -496,7 +500,7 @@ void StartSineWaveTask(void const * argument)
 		
 		//signal and sampling frequency given in the instructions
 		sine_out1 = arm_sin_f32(2*M_PI*signal_freq*t/sampling_freq);
-		sine_out2 = arm_sin_f32(2*M_PI*signal_freq*t/sampling_freq);
+		sine_out2 = arm_sin_f32(2*M_PI*signal_freq1*t/sampling_freq);
 		t++;
 		//if t exceeds 31999 set back to 0 and continue to sample
 		if(t >= 32000)
@@ -531,14 +535,14 @@ void StartSineWaveTask(void const * argument)
 		writeSpace = writeSpace + 4;
 		
 		
-		if(tim3_flag == 1)
-		{
-			tim3_flag = 0;
+		//if(tim3_flag == 1)
+		//{
+		//	tim3_flag = 0;
 			BSP_QSPI_Read(readSine,readSpace,32);
 			readSpace = readSpace + 4;
 			HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, scaled_sine1);
-			HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_2, DAC_ALIGN_12B_R, scaled_sine2);
-		}
+			HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_2, DAC_ALIGN_12B_R, scaled_sine1);
+	//	}
 		
   }
   /* USER CODE END 5 */ 
