@@ -81,10 +81,26 @@ int tim3_flag = 0;
 /* USER CODE END PV */
 float32_t sine_out1;
 float32_t sine_out2;
+float32_t sine_in1;
+float32_t sine_in2;
+float32_t mixSine_in1;
+float32_t mixSine_in2;
+float32_t signalValues[2];
+float32_t mixedSignalsInit[2];
+const float32_t matrixData[4] = { 0.5, 0.5, 0.34, 0.66 };
+const arm_matrix_instance_f32 mixingMatrix;
+const arm_matrix_instance_f32 signals;
+arm_matrix_instance_f32 mixedSignals;
+
 float sampling_freq = 16000;
 float signal_freq = 261.63;
 float signal_freq1 = 392;
-float t = 0;
+
+int flag = 0;
+int time;
+int prevTime;
+int t = 0;
+
 float scaled_sine1 = 0;
 float scaled_sine2 = 0;
 uint8_t writeSine = 0;
@@ -94,8 +110,9 @@ uint8_t *array;
 uint32_t writeSpace;
 uint32_t readSpace;
 
-float32_t matrixData[4] = {0.3, 0.7, 0.8, 0.2};
-arm_matrix_instance_f32 matrix = {.numRows=2, .numCols=2, .pData=matrixData};
+
+float32_t matrixCoeffs[4] = {0.3, 0.7, 0.8, 0.2};
+arm_matrix_instance_f32 matrix = {.numRows=2, .numCols=2, .pData=matrixCoeffs};
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
@@ -122,6 +139,131 @@ int fgetc(FILE *f) {
   uint8_t ch = 0;
   while (HAL_OK != HAL_UART_Receive(&huart1, (uint8_t *)&ch, 1, 30000));
   return ch;
+}
+
+//do all the fun stuff here
+void SineGeneration()
+{
+	for (int i = 0; i < 32000; i++)
+	{
+		sine_out1 = arm_sin_f32(2 * PI *signal_freq*t / sampling_freq);
+		sine_out2 = arm_sin_f32(2 * PI *signal_freq1*t / sampling_freq);
+	}
+
+}
+
+void Store()
+{
+	SineGeneration();
+
+	for (int j = 0; j < 32000; j++)
+	{
+		while (BSP_QSPI_GetStatus() == QSPI_BUSY || BSP_QSPI_GetStatus() == QSPI_ERROR)
+		{
+			//wait here till memory is ready again
+		}
+
+		BSP_QSPI_Write((uint8_t*)&sine_out1, 0x00 + t * 0x4, 4);
+		BSP_QSPI_Write((uint8_t*)&sine_out2, 0x1F400 + t * 0x4, 4);
+	}
+}
+
+void Memory_Output()
+{
+	Store();
+
+	time = 0;
+	prevTime = time;
+
+	while (1)
+	{
+		if (prevTime != time)
+		{
+			while (BSP_QSPI_GetStatus() == QSPI_BUSY || BSP_QSPI_GetStatus() == QSPI_ERROR)
+			{
+				//wait till the memory is ready again
+			}
+
+			BSP_QSPI_Read((uint8_t*)&sine_in1, 0x00 + time * 0x4, 4);
+			BSP_QSPI_Read((uint8_t*)&sine_in2, 0x1F400 + time * 0x4, 4);
+
+
+			prevTime = time;
+		}
+
+		if (flag == 1)
+		{
+			if (time >= 31999)
+			{
+				time = 0;
+			}
+			HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, scaled_sine1);
+			HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_2, DAC_ALIGN_12B_R, scaled_sine1);
+			time++;
+			flag = 0; //put here or after the if statement?
+		}
+	}
+}
+
+void MixedSignals()
+{
+	Store();
+	time = 0;
+	prevTime = 0;
+
+	arm_mat_init_f32((arm_matrix_instance_f32*)&mixedSignals, (uint16_t)2, (uint16_t)1, (float32_t *)&mixedSignalsInit);
+	arm_mat_init_f32((arm_matrix_instance_f32*)&mixingMatrix, (uint16_t)2, (uint16_t)2, (float32_t *)&matrixData);
+
+	for (t = 0; t < 32000; t++)
+	{
+		BSP_QSPI_Read((uint8_t*)&signalValues[0], 0x0 + t * 0x4, 4);
+		BSP_QSPI_Read((uint8_t*)&signalValues[1], 0x1F400 + t * 0x4, 4);
+		while (BSP_QSPI_GetStatus() == QSPI_BUSY || BSP_QSPI_GetStatus() == QSPI_ERROR)
+		{
+			//wait till the memory is ready
+		}
+		arm_mat_init_f32((arm_matrix_instance_f32*)&signals, (uint16_t)2, (uint16_t)1, (float32_t *)&signalValues);
+
+		if (arm_mat_mult_f32(&mixingMatrix, &signals, &mixedSignals) == ARM_MATH_SUCCESS)
+		{
+			BSP_QSPI_Write((uint8_t*)&mixedSignals.pData[0], 0x3E800 + t * 0x4, 4);
+			BSP_QSPI_Write((uint8_t*)&mixedSignals.pData[1], 0x5DC00 + t * 0x4, 4);
+			
+			while (BSP_QSPI_GetStatus() == QSPI_BUSY || BSP_QSPI_GetStatus() == QSPI_ERROR)
+			{
+				//wait till the memory is ready
+			}
+		}
+
+		while (1)
+		{
+			if(prevTime != time)
+			{
+				while (BSP_QSPI_GetStatus() == QSPI_BUSY || BSP_QSPI_GetStatus() == QSPI_ERROR)
+				{
+					//wait till the memory is ready
+				}
+				BSP_QSPI_Read((uint8_t*)&mixSine_in1, 0x3E800 + time * 0x4, 4);
+				BSP_QSPI_Read((uint8_t*)&mixSine_in2, 0x5DC00 + time * 0x4, 4);
+
+
+				prevTime = time;
+			}
+
+			if (flag == 1)
+			{
+				if (time >= 31999)
+				{
+					time = 0;
+				}
+
+				HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, mixSine_in1*1024);
+				HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_2, DAC_ALIGN_12B_R, mixSine_in2*1024);
+				time++;
+				flag = 0; //put here or after the if statement?
+			}
+		}
+	}
 }
 
 /* USER CODE END 0 */
@@ -159,18 +301,32 @@ int main(void)
   MX_DFSDM1_Init();
   MX_DAC1_Init();
   MX_TIM2_Init();
-	BSP_QSPI_Init();
+
   /* USER CODE BEGIN 2 */
 	HAL_DAC_Start(&hdac1, DAC_CHANNEL_1);
 	HAL_DAC_Start(&hdac1, DAC_CHANNEL_2);
   /* USER CODE END 2 */
 
+	BSP_QSPI_DeInit();
+	BSP_QSPI_Init();
+
 	//Erasing here works
 	int i; 
-	for (i = 0; i >= 255; i++)
+	for (i = 0; i < 256; i++)
 	{
-		BSP_QSPI_Erase_Sector(i);
+		if (BSP_QSPI_GetStatus() == QSPI_OK)
+		{
+			BSP_QSPI_Erase_Sector(i);
+		}
+
+		while (BSP_QSPI_GetStatus() == QSPI_BUSY || BSP_QSPI_GetStatus() == QSPI_ERROR)
+		{
+			//wait till the memory is ready
+		}		
 	}
+
+	//Memory_Output();
+	//MixedSignals();
 
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
@@ -186,8 +342,8 @@ int main(void)
 
   /* Create the thread(s) */
   /* definition and creation of defaultTask */
-	osThreadDef(sineWaveTask, StartSineWaveTask, osPriorityNormal, 0, 128);
-	sineWaveTaskHandle = osThreadCreate(osThread(sineWaveTask), NULL);
+	//osThreadDef(sineWaveTask, StartSineWaveTask, osPriorityNormal, 0, 128);
+	//sineWaveTaskHandle = osThreadCreate(osThread(sineWaveTask), NULL);
 	
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -199,19 +355,19 @@ int main(void)
  
 
   /* Start scheduler */
-  osKernelStart();
+ // osKernelStart();
   
   /* We should never get here as control is now taken by the scheduler */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 	
-	while (1)
-  {
+	//while (1)
+  //{
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
-  }
+  //}
   /* USER CODE END 3 */
 
 }
