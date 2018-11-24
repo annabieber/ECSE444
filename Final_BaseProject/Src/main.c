@@ -85,12 +85,9 @@ float32_t sine_in1;
 float32_t sine_in2;
 float32_t mixSine_in1;
 float32_t mixSine_in2;
-float32_t signalValues[2];
-float32_t mixedSignalsInit[2];
+
 const float32_t matrixData[4] = { 0.5, 0.5, 0.34, 0.66 };
-const arm_matrix_instance_f32 mixingMatrix;
-const arm_matrix_instance_f32 signals;
-arm_matrix_instance_f32 mixedSignals;
+
 
 float sampling_freq = 16000;
 float signal_freq = 261.63;
@@ -99,7 +96,6 @@ float signal_freq1 = 392;
 int flag = 0;
 int time;
 int prevTime;
-int t = 0;
 
 float scaled_sine1 = 0;
 float scaled_sine2 = 0;
@@ -141,30 +137,21 @@ int fgetc(FILE *f) {
   return ch;
 }
 
-//do all the fun stuff here
-void SineGeneration()
-{
-	for (int i = 0; i < 32000; i++)
-	{
-		sine_out1 = arm_sin_f32(2 * PI *signal_freq*t / sampling_freq);
-		sine_out2 = arm_sin_f32(2 * PI *signal_freq1*t / sampling_freq);
-	}
-
-}
 
 void Store()
 {
-	SineGeneration();
-
-	for (int j = 0; j < 32000; j++)
+	int j = 0;
+	for (j = 0; j < 32000; j++)
 	{
 		while (BSP_QSPI_GetStatus() == QSPI_BUSY || BSP_QSPI_GetStatus() == QSPI_ERROR)
 		{
 			//wait here till memory is ready again
 		}
+		sine_out1 = (arm_sin_f32(2 * PI *signal_freq*j / sampling_freq)+1)*1024;
+		sine_out2 = (arm_sin_f32(2 * PI *signal_freq1*j / sampling_freq)+1)*1024;
 
-		BSP_QSPI_Write((uint8_t*)&sine_out1, 0x00 + t * 0x4, 4);
-		BSP_QSPI_Write((uint8_t*)&sine_out2, 0x1F400 + t * 0x4, 4);
+		BSP_QSPI_Write((uint8_t*)&sine_out1, 0x00 + j * 0x4, 4);
+		BSP_QSPI_Write((uint8_t*)&sine_out2, 0x1F400 + j * 0x4, 4);
 	}
 }
 
@@ -183,10 +170,8 @@ void Memory_Output()
 			{
 				//wait till the memory is ready again
 			}
-
-			BSP_QSPI_Read((uint8_t*)&sine_in1, 0x00 + time * 0x4, 4);
-			BSP_QSPI_Read((uint8_t*)&sine_in2, 0x1F400 + time * 0x4, 4);
-
+			BSP_QSPI_Read((uint8_t*)&scaled_sine1, 0x00 + time * 0x4, 4);
+			BSP_QSPI_Read((uint8_t*)&scaled_sine2, 0x1F400 + time * 0x4, 4);
 
 			prevTime = time;
 		}
@@ -198,7 +183,7 @@ void Memory_Output()
 				time = 0;
 			}
 			HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, scaled_sine1);
-			HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_2, DAC_ALIGN_12B_R, scaled_sine1);
+			HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_2, DAC_ALIGN_12B_R, scaled_sine2);
 			time++;
 			flag = 0; //put here or after the if statement?
 		}
@@ -206,22 +191,30 @@ void Memory_Output()
 }
 
 void MixedSignals()
-{
+{		
+	float32_t signalValues[2];
+	float32_t mixedSignalsInit[2];
+	const arm_matrix_instance_f32 mixingMatrix;
+	const arm_matrix_instance_f32 signals;
+	arm_matrix_instance_f32 mixedSignals;
+	
+	int t = 0;
 	Store();
 	time = 0;
-	prevTime = 0;
+	prevTime = time;
 
 	arm_mat_init_f32((arm_matrix_instance_f32*)&mixedSignals, (uint16_t)2, (uint16_t)1, (float32_t *)&mixedSignalsInit);
 	arm_mat_init_f32((arm_matrix_instance_f32*)&mixingMatrix, (uint16_t)2, (uint16_t)2, (float32_t *)&matrixData);
 
 	for (t = 0; t < 32000; t++)
 	{
-		BSP_QSPI_Read((uint8_t*)&signalValues[0], 0x0 + t * 0x4, 4);
-		BSP_QSPI_Read((uint8_t*)&signalValues[1], 0x1F400 + t * 0x4, 4);
 		while (BSP_QSPI_GetStatus() == QSPI_BUSY || BSP_QSPI_GetStatus() == QSPI_ERROR)
 		{
 			//wait till the memory is ready
 		}
+		BSP_QSPI_Read((uint8_t*)&signalValues[0], 0x0 + t * 0x4, 4);
+		BSP_QSPI_Read((uint8_t*)&signalValues[1], 0x1F400 + t * 0x4, 4);
+		
 		arm_mat_init_f32((arm_matrix_instance_f32*)&signals, (uint16_t)2, (uint16_t)1, (float32_t *)&signalValues);
 
 		if (arm_mat_mult_f32(&mixingMatrix, &signals, &mixedSignals) == ARM_MATH_SUCCESS)
@@ -234,6 +227,7 @@ void MixedSignals()
 				//wait till the memory is ready
 			}
 		}
+	}
 
 		while (1)
 		{
@@ -257,14 +251,24 @@ void MixedSignals()
 					time = 0;
 				}
 
-				HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, mixSine_in1*1024);
-				HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_2, DAC_ALIGN_12B_R, mixSine_in2*1024);
+				HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, mixSine_in1);
+				HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_2, DAC_ALIGN_12B_R, mixSine_in2);
 				time++;
 				flag = 0; //put here or after the if statement?
 			}
 		}
 	}
+
+	
+void fastICA_MATLAB(){
+  MX_USART1_UART_Init();
+	
+	printf("%f", mixSine_in1);
+	printf("%f", mixSine_in2);
+	
+	//todo receive
 }
+
 
 /* USER CODE END 0 */
 
@@ -325,7 +329,7 @@ int main(void)
 		}		
 	}
 
-	//Memory_Output();
+	Memory_Output();
 	//MixedSignals();
 
   /* USER CODE BEGIN RTOS_MUTEX */
@@ -637,75 +641,75 @@ static void MX_GPIO_Init(void)
 /* USER CODE END 4 */
 
 /* StartSineWaveTask function */
-void StartSineWaveTask(void const * argument)
-{
+//void StartSineWaveTask(void const * argument)
+//{
 
-  /* USER CODE BEGIN 5 */
-	
-	//what does this mean? 
-	if(BSP_QSPI_GetStatus() != QSPI_OK)
-	{
-		status = 0;
-	}
-	else
-	{
-		status = 5;
-	}
-	
-	
-  /* Infinite loop */
-  for(;;)
-  {
-		
-		//signal and sampling frequency given in the instructions
-		sine_out1 = arm_sin_f32(2*M_PI*signal_freq*t/sampling_freq);
-		sine_out2 = arm_sin_f32(2*M_PI*signal_freq1*t/sampling_freq);
-		t++;
-		//if t exceeds 31999 set back to 0 and continue to sample
-		if(t >= 32000)
-		{
-			t = 0;
-		}
-		
-		scaled_sine1 = (sine_out1 + 1) * 512;		//highest value is 2 * 1024 = 2048 which is half of 2^12
-		scaled_sine2 = (sine_out2 + 1) * 512;	
-		
-		//check if correct frequency
+//  /* USER CODE BEGIN 5 */
+//	
+//	//what does this mean? 
+//	if(BSP_QSPI_GetStatus() != QSPI_OK)
+//	{
+//		status = 0;
+//	}
+//	else
+//	{
+//		status = 5;
+//	}
+//	
+//	
+//  /* Infinite loop */
+//  for(;;)
+//  {
+//		
+//		//signal and sampling frequency given in the instructions
+//		sine_out1 = arm_sin_f32(2*M_PI*signal_freq*t/sampling_freq);
+//		sine_out2 = arm_sin_f32(2*M_PI*signal_freq1*t/sampling_freq);
+//		t++;
+//		//if t exceeds 31999 set back to 0 and continue to sample
+//		if(t >= 32000)
+//		{
+//			t = 0;
+//		}
+//		
+//		scaled_sine1 = (sine_out1 + 1) * 512;		//highest value is 2 * 1024 = 2048 which is half of 2^12
+//		scaled_sine2 = (sine_out2 + 1) * 512;	
+//		
+//		//check if correct frequency
+////		if(tim3_flag == 1)
+////		{
+////			tim3_flag = 0;
+////			HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, scaled_sine1);
+////			HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_2, DAC_ALIGN_12B_R, scaled_sine2);
+////		
+////		}
+//		
+//		//matrix multiplication
+//		float32_t inputData[2] = {scaled_sine1, scaled_sine2};
+//		float32_t mixedData[2];
+//		arm_matrix_instance_f32 mixed = {.numRows=2, .numCols=1, .pData=mixedData};
+//		arm_matrix_instance_f32 input = {.numRows=2, .numCols=1, .pData=inputData};
+//		arm_mat_mult_f32(&matrix, &input, &mixed);		
+//				
+//		//can't seem to figure out the types that are needed here
+//		//will have to come back to this
+//		
+//		array = (uint8_t*)(&scaled_sine1);
+//		BSP_QSPI_Write(array,writeSpace,32);
+//		writeSpace = writeSpace + 4;
+//		
+//		
 //		if(tim3_flag == 1)
 //		{
 //			tim3_flag = 0;
+//			BSP_QSPI_Read(readSine,readSpace,32);
+//			readSpace = readSpace + 4;
 //			HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, scaled_sine1);
-//			HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_2, DAC_ALIGN_12B_R, scaled_sine2);
-//		
+//			HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_2, DAC_ALIGN_12B_R, scaled_sine1);
 //		}
-		
-		//matrix multiplication
-		float32_t inputData[2] = {scaled_sine1, scaled_sine2};
-		float32_t mixedData[2];
-		arm_matrix_instance_f32 mixed = {.numRows=2, .numCols=1, .pData=mixedData};
-		arm_matrix_instance_f32 input = {.numRows=2, .numCols=1, .pData=inputData};
-		arm_mat_mult_f32(&matrix, &input, &mixed);		
-				
-		//can't seem to figure out the types that are needed here
-		//will have to come back to this
-		
-		array = (uint8_t*)(&scaled_sine1);
-		BSP_QSPI_Write(array,writeSpace,32);
-		writeSpace = writeSpace + 4;
-		
-		
-		if(tim3_flag == 1)
-		{
-			tim3_flag = 0;
-			BSP_QSPI_Read(readSine,readSpace,32);
-			readSpace = readSpace + 4;
-			HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, scaled_sine1);
-			HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_2, DAC_ALIGN_12B_R, scaled_sine1);
-		}
-		
-  }
-  /* USER CODE END 5 */ 
-}
+//		
+//  }
+//  /* USER CODE END 5 */ 
+//}
 
 /**
   * @brief  Period elapsed callback in non blocking mode
