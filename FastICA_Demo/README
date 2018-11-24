@@ -1,0 +1,10 @@
+To use this code, run ECSE444_Demo in matlab.
+
+The files have been stripped away of unnecessary code. If you want to see 
+the original source code (as linked in the ICA slides provided in the
+lab handout), go through the original_ICA_code folder.
+
+This is the deflationary approach, estimating a single vector 'w' of the 
+unmixing matrix 'W' at a time. The non-linearity function used here is 
+'pow3'. You may use tanh if desired, and you can refer to the original code
+for how to use it.
