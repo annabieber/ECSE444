@@ -31,8 +31,14 @@ x = A*s;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Receive and transmit from keil
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-keil = ('COM6', 'BaudRate', 115200);
-fopen(keil);
+s = serial('COM1');
+set(s,'BaudRate',4800);
+fopen(s);
+fprintf(s,'*IDN?');
+out = fscanf(s);
+fclose(s);
+delete(s);
+clear s
 
 %todo need to be able to receive values from keil project 
 
@@ -43,8 +49,8 @@ fopen(keil);
 [u, A_est, W] = fastica(x);
 
 %transmit values
-fprintf(keil,'%d', u);
-fclose(keil);
+%fprintf(keil,'%d', u);
+%fclose(keil);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Plotting and display
