@@ -34,10 +34,14 @@ x = A*s;
 s = serial('COM3');
 set(s,'BaudRate',115200);
 fopen(s);
-%%add a forloop here and store into vector? 
+%%fprintf(s,'*IDN?');
 out = fscanf(s);
+fprintf(s, '%d', );
+fclose(s);
+delete(s);
+clear s
 
-
+%todo need to be able to receive values from keil project 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -45,11 +49,9 @@ out = fscanf(s);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 [u, A_est, W] = fastica(x);
 
-%transmit values, need for loop? 
-fprintf(s, '%d', u(1,:));
-fclose(s);
-delete(s);
-clear s
+%transmit values
+%fprintf(keil,'%d', u);
+%fclose(keil);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Plotting and display

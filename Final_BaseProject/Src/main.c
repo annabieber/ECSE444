@@ -260,13 +260,46 @@ void MixedSignals()
 	}
 
 	
-void fastICA_MATLAB(){
+void fastICA_MATLAB()
+{
   MX_USART1_UART_Init();
 	
-	printf("%f", mixSine_in1);
-	printf("%f", mixSine_in2);
+	float unMixed_1 = 0;
+	float unMixed_2 = 0; 
 	
-	//todo receive
+	
+	//HAL_Delay(100);
+	//HAL_UART_Receive(&huart1, (uint8_t *)&ch[0], 5, 3000);
+	//HAL_UART_Transmit(&huart1, (uint8_t *)&ch[0], 5, 30000);
+	
+	while(1)
+	{
+		//send signal 
+		int q;
+		for(q = 0; q < 32000; q++)
+		{
+			printf("%f", mixSine_in1);
+		}		
+		
+		int r;
+		for(r = 0; r < 32000; r++)
+		{
+			printf("%f", mixSine_in2);
+		}
+		
+		//receive signal 
+		for(q = 0; r < 32000; r++)
+		{
+			scanf("%f", &unMixed_1);
+		}
+		
+		for(r = 0; r < 32000; r++)
+		{
+			scanf("%f", &unMixed_2);
+		}
+		
+		
+	}
 }
 
 
@@ -301,7 +334,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_USART1_UART_Init();
+  //MX_USART1_UART_Init();
   MX_DFSDM1_Init();
   MX_DAC1_Init();
   MX_TIM2_Init();
@@ -329,8 +362,9 @@ int main(void)
 		}		
 	}
 
-	Memory_Output();
+	//Memory_Output();
 	//MixedSignals();
+	fastICA_MATLAB();
 
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
