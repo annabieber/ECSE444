@@ -26,7 +26,7 @@ s = [s1;s2];
 
 randn('seed', 1);
 A = randn(2,2);
-x = A*s;
+%%x = A*s;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Receive and transmit from keil
@@ -35,11 +35,10 @@ keil = serial('COM3','BaudRate',115200);
 fopen(keil);
 %%add a forloop here and store into vector? 
 %fprintf(s,'*IDN');
-out = fscanf(keil);
-display(out);
+out1 = fscanf(keil);
+out2 = fscanf(keil);
 
-
-
+x = [out1; out2];
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Performing FastICA
