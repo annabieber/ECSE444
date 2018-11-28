@@ -27,18 +27,21 @@ s = [s1;s2];
 randn('seed', 1);
 A = randn(2,2);
 x = A*s;
+%display('Mixing matrix: ');
+%display(x);
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Receive and transmit from keil
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-s = serial('COM1');
-set(s,'BaudRate',4800);
-fopen(s);
-fprintf(s,'*IDN?');
-out = fscanf(s);
-fclose(s);
-delete(s);
-clear s
+% s = serial('COM1');
+% set(s,'BaudRate',4800);
+% fopen(s);
+% fprintf(s,'*IDN?');
+% out = fscanf(s);
+% fclose(s);
+% delete(s);
+% clear s
 
 %todo need to be able to receive values from keil project 
 

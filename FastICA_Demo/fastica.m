@@ -2,7 +2,7 @@ function [Out1, Out2, Out3] = fastica(mixedsig)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Remove the mean and check the data
-
+printf('Size of vectors %d', );
 [mixedsig, mixedmean] = remmean(mixedsig);
 
 [Dim, NumOfSampl] = size(mixedsig);

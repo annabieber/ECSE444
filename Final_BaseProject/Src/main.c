@@ -239,6 +239,8 @@ void MixedSignals()
 				}
 				BSP_QSPI_Read((uint8_t*)&mixSine_in1, 0x3E800 + time * 0x4, 4);
 				BSP_QSPI_Read((uint8_t*)&mixSine_in2, 0x5DC00 + time * 0x4, 4);
+				FastICA_c(mixedSine_in1, mixSine_in2);
+
 
 
 				prevTime = time;
@@ -270,62 +272,81 @@ void FastICA_MATLAB()
 	//todo receive
 }
 
-struct mean
+struct Means
 {
 	double meanValue;
 	double newVectors[];
 };
 
-struct sizes
+struct Sizes
 {
 	double dimension;
 	double numOfSamples;
 };
 
-struct covariance
+struct Covariance
 {
-	double eigenvectors[];
-	double eigenvalues[];
+	double eigenvectors[2][2];
+	double eigenvalues[3][2];
 };
 
-struct whitening
+struct Whitening
 {
-	double whiteningMatrix[];
-	double deWhiteningMatrix[];
-	double newVectors[];
+	double whiteningMatrix[2][2];
+	double deWhiteningMatrix[2][2];
+	double newVectors[2];
 };
 
-struct vectors
+struct Vectors
 {
-	double a[];
-	double w[];
+	double a[2];
+	double w[2];
 };
 
 
-mean Remmean(double mixedSignals[])
+struct Means Remmean(double mixedSignals[])
 {
-	struct mean means;
+	struct Means mean;
 	double meanValue = 0;
 
 }
 
-void pcmat()
+struct Covariance pcmat()
 {
 
 }
 
-void whitenv()
+struct Whitening whitenv()
 {
 
 }
 
-void fpica()
+struct Vectors fpica()
 {
 
 }
 
-void FastICA_c()
+struct Means Remmean()
 {
+
+}
+
+void FastICA_c(float32_t mixedValue1, float32_t mixedValue2)
+{
+
+	//int k;
+	//for(k = 0; k < 32000; k++)
+	//{
+	//	while (BSP_QSPI_GetStatus() == QSPI_BUSY || BSP_QSPI_GetStatus() == QSPI_ERROR)
+	//	{
+	//		//wait till the memory is ready
+	//	}
+	//	BSP_QSPI_Read((uint8_t*)&mixSine_in1, 0x3E800 + time * 0x4, 4);
+	//	BSP_QSPI_Read((uint8_t*)&mixSine_in2, 0x5DC00 + time * 0x4, 4);
+
+	//}
+
+
 	//calls remmean
 	//(calls size)
 	//calls PCMAT
