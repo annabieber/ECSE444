@@ -260,13 +260,80 @@ void MixedSignals()
 	}
 
 	
-void fastICA_MATLAB(){
+void FastICA_MATLAB()
+{
   MX_USART1_UART_Init();
 	
 	printf("%f", mixSine_in1);
 	printf("%f", mixSine_in2);
 	
 	//todo receive
+}
+
+struct mean
+{
+	double meanValue;
+	double newVectors[];
+};
+
+struct sizes
+{
+	double dimension;
+	double numOfSamples;
+};
+
+struct covariance
+{
+	double eigenvectors[];
+	double eigenvalues[];
+};
+
+struct whitening
+{
+	double whiteningMatrix[];
+	double deWhiteningMatrix[];
+	double newVectors[];
+};
+
+struct vectors
+{
+	double a[];
+	double w[];
+};
+
+
+mean Remmean(double mixedSignals[])
+{
+	struct mean means;
+	double meanValue = 0;
+
+}
+
+void pcmat()
+{
+
+}
+
+void whitenv()
+{
+
+}
+
+void fpica()
+{
+
+}
+
+void FastICA_c()
+{
+	//calls remmean
+	//(calls size)
+	//calls PCMAT
+	//calls whitenv
+	//calls fpica
+
+	//do some math in between methods
+
 }
 
 
@@ -331,6 +398,10 @@ int main(void)
 
 	Memory_Output();
 	//MixedSignals();
+
+	//TODO
+	//call fastICA c here, do some math after like matlab
+	//send to Dac?
 
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
