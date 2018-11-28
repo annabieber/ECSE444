@@ -265,41 +265,46 @@ void fastICA_MATLAB()
   MX_USART1_UART_Init();
 	
 	float unMixed_1 = 0;
-	float unMixed_2 = 0; 
+	float unMixed_2 = 0;
+
+	printf("Enter an Integer between 0 and 1000:");
 	
+	//string out;
+	//keil = serial('COM3','BaudRate',115200);
+	//fscanf();
 	
 	//HAL_Delay(100);
 	//HAL_UART_Receive(&huart1, (uint8_t *)&ch[0], 5, 3000);
 	//HAL_UART_Transmit(&huart1, (uint8_t *)&ch[0], 5, 30000);
 	
-	while(1)
-	{
-		//send signal 
-		int q;
-		for(q = 0; q < 32000; q++)
-		{
-			printf("%f", mixSine_in1);
-		}		
-		
-		int r;
-		for(r = 0; r < 32000; r++)
-		{
-			printf("%f", mixSine_in2);
-		}
-		
-		//receive signal 
-		for(q = 0; r < 32000; r++)
-		{
-			scanf("%f", &unMixed_1);
-		}
-		
-		for(r = 0; r < 32000; r++)
-		{
-			scanf("%f", &unMixed_2);
-		}
-		
-		
-	}
+//	while(1)
+//	{
+//		//send signal 
+//		int q;
+//		for(q = 0; q < 32000; q++)
+//		{
+//			printf("%f", mixSine_in1);
+//		}		
+//		
+//		int r;
+//		for(r = 0; r < 32000; r++)
+//		{
+//			printf("%f", mixSine_in2);
+//		}
+//		
+//		//receive signal 
+//		for(q = 0; r < 32000; r++)
+//		{
+//			scanf("%f", &unMixed_1);
+//		}
+//		
+//		for(r = 0; r < 32000; r++)
+//		{
+//			scanf("%f", &unMixed_2);
+//		}
+//		
+//		
+//	}
 }
 
 

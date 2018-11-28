@@ -31,17 +31,16 @@ x = A*s;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Receive and transmit from keil
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-s = serial('COM3');
-set(s,'BaudRate',115200);
+delete(instrfindall);
+s = serial('COM3','BaudRate',115200);
+%%set(s,'BaudRate',115200);
 fopen(s);
-%%fprintf(s,'*IDN?');
+%%add a forloop here and store into vector? 
+%fprintf(s,'*IDN');
 out = fscanf(s);
-fprintf(s, '%d', );
-fclose(s);
-delete(s);
-clear s
+printf(')
 
-%todo need to be able to receive values from keil project 
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -49,9 +48,11 @@ clear s
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 [u, A_est, W] = fastica(x);
 
-%transmit values
-%fprintf(keil,'%d', u);
-%fclose(keil);
+%transmit values, need for loop? 
+% fprintf(s, '%d', u(1,:));
+ fclose(s);
+ delete(s);
+ clear s
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Plotting and display

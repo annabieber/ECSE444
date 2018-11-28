@@ -32,13 +32,17 @@ compiling main.c...
   	const arm_matrix_instance_f32 mixingMatrix;
 ../Src/main.c(198): warning:  #257-D: const variable "signals"  requires an initializer
   	const arm_matrix_instance_f32 signals;
-../Src/main.c(796): warning:  #1-D: last line of file ends without a newline
+../Src/main.c(267): warning:  #177-D: variable "unMixed_1"  was declared but never referenced
+  	float unMixed_1 = 0;
+../Src/main.c(268): warning:  #177-D: variable "unMixed_2"  was declared but never referenced
+  	float unMixed_2 = 0;
+../Src/main.c(815): warning:  #1-D: last line of file ends without a newline
   /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
-../Src/main.c: 3 warnings, 0 errors
+../Src/main.c: 5 warnings, 0 errors
 linking...
-Program Size: Code=15736 RO-data=560 RW-data=144 ZI-data=1912  
+Program Size: Code=13640 RO-data=496 RW-data=136 ZI-data=1912  
 FromELF: creating hex file...
-"GXX_Project\GXX_Project.axf" - 0 Error(s), 3 Warning(s).
+"GXX_Project\GXX_Project.axf" - 0 Error(s), 5 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -65,9 +69,9 @@ Package Vendor: Keil
    * Component: ARM::CMSIS:CORE:5.1.2
 
    * Component: ARM::CMSIS:DSP:1.5.2
-      Include file:  CMSIS\DSP\Include\arm_math.h
       Library file:  CMSIS\Lib\ARM\arm_cortexM4lf_math.lib
-Build Time Elapsed:  00:00:06
+      Include file:  CMSIS\DSP\Include\arm_math.h
+Build Time Elapsed:  00:00:07
 </pre>
 </body>
 </html>

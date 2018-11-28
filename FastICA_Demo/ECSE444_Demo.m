@@ -31,11 +31,12 @@ x = A*s;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Receive and transmit from keil
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-s = serial('COM3');
-set(s,'BaudRate',115200);
-fopen(s);
+keil = serial('COM3','BaudRate',115200);
+fopen(keil);
 %%add a forloop here and store into vector? 
-out = fscanf(s);
+%fprintf(s,'*IDN');
+out = fscanf(keil);
+display(out);
 
 
 
@@ -46,10 +47,10 @@ out = fscanf(s);
 [u, A_est, W] = fastica(x);
 
 %transmit values, need for loop? 
-fprintf(s, '%d', u(1,:));
-fclose(s);
-delete(s);
-clear s
+% fprintf(s, '%d', u(1,:));
+ fclose(keil);
+ delete(keil);
+ clear keil;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Plotting and display
