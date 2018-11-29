@@ -110,6 +110,8 @@ uint32_t readSpace;
 float32_t matrixCoeffs[4] = {0.3, 0.7, 0.8, 0.2};
 arm_matrix_instance_f32 matrix = {.numRows=2, .numCols=2, .pData=matrixCoeffs};
 
+
+
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
@@ -274,27 +276,27 @@ void FastICA_MATLAB()
 
 struct Means
 {
-	double meanValue;
-	double newVectors[];
+	float meanValue;
+	float32_t newVectors[2][16000];
 };
 
 struct Sizes
 {
-	double dimension;
-	double numOfSamples;
+	float dimension;
+	float numOfSamples;
 };
 
 struct Covariance
 {
-	double eigenvectors[2][2];
-	double eigenvalues[3][2];
+	float32_t eigenvectors[2][16000];
+	float32_t eigenvalues[2][16000];
 };
 
 struct Whitening
 {
-	double whiteningMatrix[2][2];
-	double deWhiteningMatrix[2][2];
-	double newVectors[2];
+	float32_t whiteningMatrix[2][16000];
+	float32_t deWhiteningMatrix[2][16000];
+	float32_t newVectors[2];
 };
 
 struct Vectors
@@ -304,21 +306,44 @@ struct Vectors
 };
 
 
-struct Means Remmean(double mixedSignals[])
+struct Means Remmean(float32_t mixedSignals[2][16000])
 {
 	struct Means mean;
 	double meanValue = 0;
-
+	//double newVector[2][16000];
+	for(int i = 0; i < 16000; i++)
+	{
+		mean.newVectors[0][i] = 0;
+		mean.newVectors[1][i] = 0;
+	}
+	//find mean value
+	
+	//remove the mean value from the vector
+	//newVectors = vectors - meanValue * ones (1,size (vectors, 2));
+	
+	return mean;
 }
 
-struct Covariance pcmat()
+struct Covariance pcmat(float32_t vectors[2][16000])
 {
+	//Calculate the covariance matrix.
+	//covarianceMatrix = cov(vectors', 1);
 
+	//Calculate the eigenvalues and eigenvectors of covariance
+	//matrix.
+	//[E, D] = eig (covarianceMatrix);
 }
 
-struct Whitening whitenv()
+struct Whitening whitenv(float32_t vectors[2][16000], float32_t E[][], float32_t D[][])
 {
+	//Calculate the whitening and dewhitening matrices (these handle
+	//dimensionality simultaneously).
+	//whiteningMatrix = inv(sqrt (D)) * E';
+	//dewhiteningMatrix = E * sqrt (D);
 
+	//Project to the eigenvectors of the covariance matrix.
+	//Whiten the samples and reduce dimension simultaneously.	
+	//newVectors =  whiteningMatrix * vectors;
 }
 
 struct Vectors fpica()
@@ -326,32 +351,51 @@ struct Vectors fpica()
 
 }
 
-struct Means Remmean()
-{
-
-}
 
 void FastICA_c(float32_t mixedValue1, float32_t mixedValue2)
 {
+	float32_t vector[2][16000];
+	int k;
+	for(k = 0; k < 32000; k++)
+	{
+		while (BSP_QSPI_GetStatus() == QSPI_BUSY || BSP_QSPI_GetStatus() == QSPI_ERROR)
+		{
+			//wait till the memory is ready
+		}
+		BSP_QSPI_Read((uint8_t*)&vector[0][k], 0x3E800 + k * 0x4, 4);
+		BSP_QSPI_Read((uint8_t*)&vector[1][k], 0x5DC00 + k * 0x4, 4);
 
-	//int k;
-	//for(k = 0; k < 32000; k++)
-	//{
-	//	while (BSP_QSPI_GetStatus() == QSPI_BUSY || BSP_QSPI_GetStatus() == QSPI_ERROR)
-	//	{
-	//		//wait till the memory is ready
-	//	}
-	//	BSP_QSPI_Read((uint8_t*)&mixSine_in1, 0x3E800 + time * 0x4, 4);
-	//	BSP_QSPI_Read((uint8_t*)&mixSine_in2, 0x5DC00 + time * 0x4, 4);
-
-	//}
+	}
+	
 
 
 	//calls remmean
+	struct Means mixedSignal;
+	mixedSignal.meanValue = Remmean(vector).meanValue;
+	mixedSignal.newVectors = Remmean(vector).newVectors;
+	
 	//(calls size)
+	
+	
+	//Default values for 'fpica' parameters
+	double epsilon           = 0.0001;
+	double maxNumIterations  = 1000;
+	
+
 	//calls PCMAT
+	struct Covariance values;
+	values.eigenvalues = pcmat(mixedSignal.newVectors).eigenvalues;
+	values.eigenvectors = pcmat(mixedSignal.newVectors).eigenvectors;
+	
+	
+	
 	//calls whitenv
+	whitnv(mixedSignal.newVectors, values.eigenvalues, values.eigenvectors);
+	
+	//Dim = size(whitesig, 1);
+
 	//calls fpica
+	
 
 	//do some math in between methods
 
