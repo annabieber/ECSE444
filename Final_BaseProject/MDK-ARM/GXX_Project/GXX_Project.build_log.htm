@@ -21,22 +21,32 @@ Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V2.0.15.0_KEIL
 Dialog DLL:      TCM.DLL V1.14.5.0
  
 <h2>Project:</h2>
-C:\Final_BaseProject\MDK-ARM\GXX_Project.uvprojx
-Project File Date:  11/05/2018
+C:\ECSE444Lab\ECSE444Project-master\Final_BaseProject\MDK-ARM\GXX_Project.uvprojx
+Project File Date:  11/29/2018
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.05 update 2 (build 169)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'GXX_Project'
 compiling main.c...
-../Src/main.c(616): warning:  #1-D: last line of file ends without a newline
+../Src/main.c(152): warning:  #177-D: variable "val1" was declared but never referenced
+        float val1;
+../Src/main.c(153): warning:  #177-D: variable "val2" was declared but never referenced
+        float val2;
+../Src/main.c(156): warning:  #177-D: variable "matrix" was declared but never referenced
+        float matrix[16000][16000];
+../Src/main.c(248): warning:  #257-D: const variable "mixingMatrix" requires an initializer
+        const arm_matrix_instance_f32 mixingMatrix;
+../Src/main.c(249): warning:  #257-D: const variable "signals" requires an initializer
+        const arm_matrix_instance_f32 signals;
+../Src/main.c(830): warning:  #1-D: last line of file ends without a newline
   /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
-../Src/main.c: 1 warning, 0 errors
+../Src/main.c: 6 warnings, 0 errors
 linking...
 GXX_Project\GXX_Project.axf: Warning: L6988W: Ignoring unknown patch sdcomp-29491-629360.
-Program Size: Code=18504 RO-data=2680 RW-data=204 ZI-data=4916  
+Program Size: Code=18176 RO-data=2564 RW-data=144 ZI-data=1912  
 Finished: 0 information, 1 warning and 0 error messages.
 FromELF: creating hex file...
-"GXX_Project\GXX_Project.axf" - 0 Error(s), 2 Warning(s).
+"GXX_Project\GXX_Project.axf" - 0 Error(s), 7 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -48,7 +58,7 @@ Package Vendor: ARM
    * Component: DSP Version: 1.5.2
 
 <h2>Collection of Component include folders:</h2>
-  C:\Final_BaseProject\MDK-ARM\RTE
+  C:\ECSE444Lab\ECSE444Project-master\Final_BaseProject\MDK-ARM\RTE
   C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.3.0\CMSIS\Include
   C:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.0.0\Drivers\CMSIS\Device\ST\STM32L4xx\Include
 
@@ -57,8 +67,8 @@ Package Vendor: ARM
    * Component: ARM::CMSIS:CORE:5.1.1
 
    * Component: ARM::CMSIS:DSP:1.5.2
-      Library file:  CMSIS\Lib\ARM\arm_cortexM4lf_math.lib
       Include file:  CMSIS\Include\arm_math.h
+      Library file:  CMSIS\Lib\ARM\arm_cortexM4lf_math.lib
 </pre>
 </body>
 </html>

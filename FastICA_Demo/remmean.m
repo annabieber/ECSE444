@@ -13,3 +13,5 @@ function [newVectors, meanValue] = remmean(vectors);
 newVectors = zeros (size (vectors));
 meanValue = mean (vectors')';
 newVectors = vectors - meanValue * ones (1,size (vectors, 2));
+test = size (vectors, 2)
+test2 = size (vectors)
