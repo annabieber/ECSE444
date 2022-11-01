@@ -1,0 +1,26 @@
+Dependencies for Project 'G02_Lab0', Target 'G02_Lab0': (DO NOT MODIFY !)
+F (.\src\main.c)(0x5B996C6C)(--c99 --gnu -c --cpu Cortex-M4.fp -D__EVAL --li -g -O0 --apcs=interwork --split_sections -I ./inc -I ./RTE-I.\RTE\_G02_Lab0-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\Core\Include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\DSP\Include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\Device\ARM\ARMCM4\Include-D__UVISION_VERSION="526" -D_RTE_ -DARMCM4_FP-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
+I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x599F83FC)
+I (./inc/add.h)(0x5B996BD0)
+F (.\src\add_c.c)(0x5B996C97)(--c99 --gnu -c --cpu Cortex-M4.fp -D__EVAL --li -g -O0 --apcs=interwork --split_sections -I ./inc -I ./RTE-I.\RTE\_G02_Lab0-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\Core\Include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\DSP\Include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\Device\ARM\ARMCM4\Include-D__UVISION_VERSION="526" -D_RTE_ -DARMCM4_FP-o .\objects\add_c.o --omf_browse .\objects\add_c.crf --depend .\objects\add_c.d)
+I (./inc/add.h)(0x5B996BD0)
+F (.\asm\add_asm.s)(0x5B996B62)(--cpu Cortex-M4.fp --li --pd "__EVAL SETA 1" -g --apcs=interwork -I.\RTE\_G02_Lab0-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\Core\Include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\DSP\Include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\Device\ARM\ARMCM4\Include--pd "__UVISION_VERSION SETA 526" --pd "_RTE_ SETA 1" --pd "ARMCM4_FP SETA 1"--list .\listings\add_asm.lst --xref -o .\objects\add_asm.o --depend .\objects\add_asm.d)
+F (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\Lib\ARM\arm_cortexM4lf_math.lib)(0x5B2D175C)()
+F (C:\Keil_v5\ARM\PACK\Keil\ARM_Compiler\1.6.0\Source\retarget_io.c)(0x584ED27E)(--c99 --gnu -c --cpu Cortex-M4.fp -D__EVAL --li -g -O0 --apcs=interwork --split_sections -I ./inc -I ./RTE-I.\RTE\_G02_Lab0-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\Core\Include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\DSP\Include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\Device\ARM\ARMCM4\Include-D__UVISION_VERSION="526" -D_RTE_ -DARMCM4_FP-o .\objects\retarget_io.o --omf_browse .\objects\retarget_io.crf --depend .\objects\retarget_io.d)
+I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x599F83FC)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F83FE)
+I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x599F83FC)
+I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F83FC)
+I (C:\Keil_v5\ARM\ARMCC\include\assert.h)(0x599F83FA)
+I (C:\Keil_v5\ARM\ARMCC\include\rt_sys.h)(0x599F83FC)
+I (.\RTE\_G02_Lab0\RTE_Components.h)(0x5B99694C)
+F (RTE\Device\ARMCM4_FP\startup_ARMCM4.s)(0x5B621946)(--cpu Cortex-M4.fp --li --pd "__EVAL SETA 1" -g --apcs=interwork -I.\RTE\_G02_Lab0-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\Core\Include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\DSP\Include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\Device\ARM\ARMCM4\Include--pd "__UVISION_VERSION SETA 526" --pd "_RTE_ SETA 1" --pd "ARMCM4_FP SETA 1"--list .\listings\startup_armcm4.lst --xref -o .\objects\startup_armcm4.o --depend .\objects\startup_armcm4.d)
+F (RTE\Device\ARMCM4_FP\system_ARMCM4.c)(0x5B621946)(--c99 --gnu -c --cpu Cortex-M4.fp -D__EVAL --li -g -O0 --apcs=interwork --split_sections -I ./inc -I ./RTE-I.\RTE\_G02_Lab0-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\Core\Include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\DSP\Include-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\Device\ARM\ARMCM4\Include-D__UVISION_VERSION="526" -D_RTE_ -DARMCM4_FP-o .\objects\system_armcm4.o --omf_browse .\objects\system_armcm4.crf --depend .\objects\system_armcm4.d)
+I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\Device\ARM\ARMCM4\Include\ARMCM4_FP.h)(0x5B621946)
+I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\Core\Include\core_cm4.h)(0x5B621944)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F83FE)
+I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\Core\Include\cmsis_version.h)(0x5B1FE754)
+I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\Core\Include\cmsis_compiler.h)(0x5B58EC86)
+I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\Core\Include\cmsis_armcc.h)(0x5B621944)
+I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\Core\Include\mpu_armv7.h)(0x5B621944)
+I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\Device\ARM\ARMCM4\Include\system_ARMCM4.h)(0x5B621946)

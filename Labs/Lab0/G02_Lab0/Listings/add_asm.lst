@@ -1,0 +1,45 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000                 AREA             text, CODE, READONLY
+    2 00000000                 export           add_asm
+    3 00000000         add_asm
+    4 00000000         
+    5 00000000 EE30 0A80       VADD.f32         S0, S1, S0
+    6 00000004 4770            BX               LR
+    7 00000006         
+    8 00000006                 END
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp --apcs=int
+erwork --depend=.\objects\add_asm.d -o.\objects\add_asm.o -I.\RTE\_G02_Lab0 -IC
+:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\Core\Include -IC:\Keil_v5\ARM\PACK\ARM
+\CMSIS\5.4.0\CMSIS\DSP\Include -IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\Device\ARM
+\ARMCM4\Include --predefine="__EVAL SETA 1" --predefine="__UVISION_VERSION SETA
+ 526" --predefine="_RTE_ SETA 1" --predefine="ARMCM4_FP SETA 1" --list=.\listin
+gs\add_asm.lst asm\add_asm.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+add_asm 00000000
+
+Symbol: add_asm
+   Definitions
+      At line 3 in file asm\add_asm.s
+   Uses
+      At line 2 in file asm\add_asm.s
+Comment: add_asm used once
+text 00000000
+
+Symbol: text
+   Definitions
+      At line 1 in file asm\add_asm.s
+   Uses
+      None
+Comment: text unused
+2 symbols
+337 symbols in table

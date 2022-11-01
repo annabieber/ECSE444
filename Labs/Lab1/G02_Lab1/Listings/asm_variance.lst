@@ -1,0 +1,145 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000                 AREA             test, CODE, READONLY
+    2 00000000         
+    3 00000000                 export           asm_variance ; label must be ex
+                                                            ported if it is to 
+                                                            be used as a functi
+                                                            on in C
+    4 00000000         
+    5 00000000         asm_variance
+    6 00000000         
+    7 00000000 B430            PUSH{R4,         R5}         ; saving context ac
+                                                            cording to calling 
+                                                            convention
+    8 00000002 ED90 0A00       VLDR.f32         S0, [R0]
+    9 00000006 680D            LDR              R5, [R1]
+   10 00000008         
+   11 00000008         meanLoop
+   12 00000008         
+   13 00000008 1E49            SUBS             R1, R1, #1  ; loop counter (N =
+                                                             N-1)
+   14 0000000A DB06            BLT              temp        ; loop has finished
+                                                            ?
+   15 0000000C EB00 0482       ADD              R4, R0, R2, LSL #2 ; creating b
+                                                            ase address for the
+                                                             next element in th
+                                                            e array
+   16 00000010 EDD4 0A00       VLDR.f32         S1, [R4]    ; load next element
+                                                             into S0
+   17 00000014 EE30 0A20       VADD.f32         S0, S0, S1  ;add the new multip
+                                                            lication to the sum
+                                                            
+   18 00000018 E7F6            B                meanLoop    ;loop again 
+   19 0000001A         
+   20 0000001A         
+   21 0000001A         temp
+   22 0000001A         
+   23 0000001A         ;VDIV.f32 S0, S0, R2
+   24 0000001A EEB0 1A40       VMOV.f32         S2, S0
+   25 0000001E 6815            LDR              R5, [R2]
+   26 00000020 E7FF            B                varianceLoop
+   27 00000022         
+   28 00000022         varianceLoop
+   29 00000022 1E49            SUBS             R1, R1, #1  ; loop counter (N =
+                                                             N-1)
+   30 00000024 DB06            BLT              done        ; loop has finished
+                                                            ?
+   31 00000026 EB00 0482       ADD              R4, R0, R2, LSL #2 ; creating b
+                                                            ase address for the
+                                                             next element in th
+                                                            e array
+   32 0000002A EDD4 0A00       VLDR.f32         S1, [R4]    ; load next element
+                                                             into S0
+   33 0000002E EE30 0A20       VADD.f32         S0, S0, S1  ;add the new multip
+                                                            lication to the sum
+                                                            
+   34 00000032 E7F6            B                varianceLoop ;loop again 
+   35 00000034         
+   36 00000034         
+   37 00000034         
+   38 00000034         
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+   39 00000034         done
+   40 00000034         
+   41 00000034         ;VDIV.f32 S0, S0, R2    ;divide the 
+   42 00000034 EDC3 1A00       VSTR.f32         S3, [R3]    ;store the result i
+                                                            n the provided regi
+                                                            ster
+   43 00000038 BC30            POP{R4,          R5}
+   44 0000003A 4770            BX               LR
+   45 0000003C         
+   46 0000003C                 END
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp --apcs=int
+erwork --depend=.\objects\asm_variance.d -o.\objects\asm_variance.o -I.\RTE\_GX
+X_Lab1 -IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\Core\Include -IC:\Keil_v5\AR
+M\PACK\ARM\CMSIS\5.4.0\CMSIS\DSP\Include -IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\
+Device\ARM\ARMCM4\Include --predefine="__EVAL SETA 1" --predefine="__UVISION_VE
+RSION SETA 526" --predefine="_RTE_ SETA 1" --predefine="ARMCM4_FP SETA 1" --lis
+t=.\listings\asm_variance.lst asm_variance.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+asm_variance 00000000
+
+Symbol: asm_variance
+   Definitions
+      At line 5 in file asm_variance.s
+   Uses
+      At line 3 in file asm_variance.s
+Comment: asm_variance used once
+done 00000034
+
+Symbol: done
+   Definitions
+      At line 39 in file asm_variance.s
+   Uses
+      At line 30 in file asm_variance.s
+Comment: done used once
+meanLoop 00000008
+
+Symbol: meanLoop
+   Definitions
+      At line 11 in file asm_variance.s
+   Uses
+      At line 18 in file asm_variance.s
+Comment: meanLoop used once
+temp 0000001A
+
+Symbol: temp
+   Definitions
+      At line 21 in file asm_variance.s
+   Uses
+      At line 14 in file asm_variance.s
+Comment: temp used once
+test 00000000
+
+Symbol: test
+   Definitions
+      At line 1 in file asm_variance.s
+   Uses
+      None
+Comment: test unused
+varianceLoop 00000022
+
+Symbol: varianceLoop
+   Definitions
+      At line 28 in file asm_variance.s
+   Uses
+      At line 26 in file asm_variance.s
+      At line 34 in file asm_variance.s
+
+6 symbols
+341 symbols in table
